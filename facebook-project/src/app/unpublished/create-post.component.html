@@ -1,0 +1,90 @@
+<div class="card" (placeSearcher)="onSearch($event)">
+    <div *ngIf="validation && validation.error">{{validation.error}}</div>
+    <div *ngIf="validation">{{validation}}</div>
+    <div class="card-block">
+        <input class="form-control" [formControl]="message" placeholder="Write something..." /> 
+        <!--<div id="placeSearch" *ngIf="searchPlace">
+            <button  class="btn btn-secondary dropdown-toggle" type="button" (click)="placesDropdown()" id="dropdownMenuButton" data-toggle="dropdown">Check in</button>
+            <select class="dropdown show">
+                <option *ngFor="let place of results | async">{{place.name}}</option>
+            </select>
+        </div>-->
+        <div *ngIf="post.place != null">
+            Checked in to --{{post.place.name}} <button type="button" class="close" (click)="removePlace()">&times;</button>
+        </div>
+        <div *ngIf="scheduled">
+            --Schedule for {{humanDate}} <button type="button" class="close" (click)="removeSchedule()">&times;</button>
+        </div>
+        <div *ngIf="post.pictureFile">
+            <output id="list"></output> <button type="button" class="close" (click)="removePhoto()">&times;</button>
+        </div>
+        <!--<div>
+            <label class="col-form-label">Publish Now?</label>
+            <input type="checkbox" [(ngModel)]="will_publish"/>
+        </div>-->
+
+    </div>
+        <div class="card-footer">
+            <div class="row">
+                <div class="dropdown col-md-1" >
+                    <button class="btn btn-secondary" type="button" id="dropdownMenuButton" data-toggle="dropdown">
+                        &nbsp;
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <a class="dropdown-item"> 
+                            <input [formControl]="placeQuery" placeholder="Search for a place..." style="outline:none" />                        
+                        </a>                                    
+                        <div class="dropdown-item" *ngFor="let place of results | async" (click)="selectPlace(place)">
+                            <div>{{place.name}}</div>
+                            <div style="font-weight: lighter">{{place.category}} - {{place.location.city}}, {{place.location.state}}</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <label class="btn btn-secondary btn-file">
+                        Upload photo
+                        <input style="display: none;" id="photo" type="file" (change)="fileChangeEventImage($event)"/>      
+                    </label>
+                </div>
+                <div class="float-md-right col-md-4">
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-primary" (click)="publish()">Publish</button>
+                        <button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <span class="sr-only">Toggle Dropdown</span>
+                        </button>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" (click)="publishNow()">Publish Now</a>
+                            <!--<a class="dropdown-item" (click)="schedule()">Schedule</a>-->
+                            <button class="dropdown-item" data-toggle="modal" data-target="#exampleModal" (click)="schedule()">Schedule</button>
+                            <a class="dropdown-item" (click)="createDraft()">Create Draft</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+</div>
+
+
+<div class="modal fade" id="exampleModal">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Modal title</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div *ngIf="!will_publish">
+            <label class="col-form-label">When would you like to schdule your post for?</label>
+            <input class="form-control" type="date" [(ngModel)]="humanDate" placeholder=""/>
+            <input class="form-control" type="time" [(ngModel)]="time"/>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" (click)="schedule2()">Save changes</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>

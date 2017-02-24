@@ -1,0 +1,36 @@
+<div class="card">
+    <div class="card-block">
+        <div *ngIf="post.attachments">
+            <div *ngIf="post.attachments.data[0].media">
+                <div class="container">
+                    <div class="row">                        
+                        <div class="col-md-3">
+                            <img src={{post.attachments.data[0].media.image.src}} class="img-thumbnail">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div *ngIf="post.attachments.data[0].subattachments">
+                <!--{{post.attachments.data[0].subattachments.data[0]}}-->
+                <div class="container">
+                    <div class="row">
+                        <!--<div class="col-md-3">-->
+                        <div class="col-md-3" *ngFor="let s of post.attachments.data[0].subattachments.data">
+                            <img src={{s.media.image.src}} class="img-thumbnail">
+                            <!--Subattachments:{{s.media.image.src}}            -->
+                        </div>
+                        <!--</div>-->
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div>{{post.name}}</div>
+        <div>{{post.message}}</div>
+        <div>{{post.created_time | date:'medium'}}</div>
+        <div>Scheduled for: {{post.scheduled_publish_time * 1000 | date:'MM-dd-yyyy HH:mm:ss Z'}}</div>
+        <div>{{post.link}}</div>
+    </div>
+</div>
+<br>
+

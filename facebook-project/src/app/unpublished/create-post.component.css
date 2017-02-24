@@ -1,0 +1,24 @@
+#dropdownMenuButton {
+    background-image: url(https://firebasestorage.googleapis.com/v0/b/facebook-rr.appspot.com/o/checkin.png?alt=media&token=ea312798-8b2e-4301-a549-e5c09b06e6a7);
+    background-repeat: no-repeat;
+    background-size: auto;
+}
+#dropdownMenuButton:hover{
+    background-image: url(/app/unpublished/checkin.png);
+    background-repeat: no-repeat;
+    background-size: auto;
+}
+
+/*.inputfile {
+    width: 0.1px;
+	height: 0.1px;
+	opacity: 0;
+	overflow: hidden;
+	position: absolute;
+	z-index: -1;
+}*/
+
+.btn-file {
+    position: relative;
+    overflow: hidden;
+}

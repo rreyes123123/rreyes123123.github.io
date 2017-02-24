@@ -1,0 +1,32 @@
+<div>Unpublished!</div>
+
+<button type="button" (click)="tryBatch()">Hi</button>
+
+<create-post *ngIf="createPost" [validation]="response" [results]="places" (placeSearcher)="onPlaceSearch($event)" (onPublish)="onPublish($event)"></create-post>
+<!--<button (click)="postToFeed()">Post Hola</button>-->
+
+<!--<spotify-search 
+      (searchEvent)="onSearch($event)" 
+      [results]="data">
+</spotify-search>-->
+<hr>
+<ul class="nav nav-tabs">
+  <!--<li class="nav-item"> <a data-toggle="tab" [ngClass]="publishedActive" (click)="clickPublish()" data-target="#home">Published</a></li>
+  <li class="nav-item"> <a data-toggle="tab" [ngClass]="unPublishedActive" (click)="clickUnpublish()" data-target="#profile">Unpublished</a></li>-->
+  <li class="nav-item"> <a data-toggle="tab" class="nav-link active" data-target="#home">Published</a></li>
+  <li class="nav-item"> <a data-toggle="tab" class="nav-link" data-target="#profile">Unpublished</a></li>
+</ul>
+
+<div class="tab-content">
+  <!--<div class="tab-pane active" id="home" role="tabpanel">-->
+  <div class="tab-pane" id="home" role="tabpanel">
+    <div *ngFor="let post of publishedPosts">
+      <post-child [post]="post" [page]="hello"></post-child>
+    </div>
+  </div>
+  <div class="tab-pane" id="profile" role="tabpanel">
+    <div *ngFor="let unpub of unpublishedPosts">
+      <unpublished-post-child [post]="unpub" [page]="hello"></unpublished-post-child>
+    </div>
+  </div>
+</div>
