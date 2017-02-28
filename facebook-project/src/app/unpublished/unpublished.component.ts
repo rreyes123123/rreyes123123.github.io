@@ -120,20 +120,51 @@ export class UnpublishedComponent {
         })
     }
   }
+
+  extractFbPages()
+  {
+    for(let i in this.publishedPosts)
+    {
+      let id = this.publishedPosts[i].id;      
+      this.publishedPosts[i].views = this.insights.get(id);
+      console.log(id);
+      console.log(this.insights.get(id));
+    }
+    console.log(this.publishedPosts);
+  }
+  insights 
+  extractData(data: Array<Object>) 
+  {
+    this.insights = new Map();
+    console.log("insight data")
+    for (let i in data)
+    {
+      let views = data[i]['data'][0]['values'][0]['value'];
+      // this.insights.push({id:i,views:views});
+      this.insights.set(i,views)
+      console.log(i);      
+      console.log(views);      
+    }
+    console.log("insights");
+    console.log(this.insights);
+    console.log(this.publishedPosts);
+    this.extractFbPages();
+  }
+
+
   tryBatch() {
     if (localStorage.getItem('response') != null) {
       this._fbPostService.batch()
-        .subscribe(data => 
+        .subscribe(result => 
         {
           console.log("data[0]");
-          console.log(data)
-          // console.log("data[1]");
-          // console.log(data[1].body)
+          console.log(JSON.parse(result[0].body).data);
+          this.publishedPosts = JSON.parse(result[0].body).data;
+          console.log("data[1]");
+          //console.log(JSON.parse(data[1].body));
+          this.extractData(JSON.parse(result[1].body));
         });
     }
-
-
-
   }
 
 

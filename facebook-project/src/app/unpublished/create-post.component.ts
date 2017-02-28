@@ -38,7 +38,7 @@ export class CreatePostComponent implements OnInit, OnChanges {
     @Output() placeSearcher = new EventEmitter<String>();
     // @Output() onPublish: EventEmitter<String> = new EventEmitter<String>();
     will_publish: boolean = true;
-    post: FbPagePost = new FbPagePost(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+    post: FbPagePost = new FbPagePost(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,null);
     message: FormControl = new FormControl('', Validators.required);
     placeQuery = new FormControl();
     date: Date;

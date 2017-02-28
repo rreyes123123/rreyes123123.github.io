@@ -39,7 +39,8 @@ export class FbPagePost {
         public type: FbPostType,
         public update_time:Date,
         public with_tags: Object, // JSON object with data field of profile[]
-        public pictureFile:File
+        public pictureFile:File,
+        public views:number
     )
     { }
 }

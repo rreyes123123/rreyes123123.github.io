@@ -1,42 +1,17 @@
 <div class="card">
     <div class="card-block">
-        <div *ngIf="post.is_published">
-            <img src={{post.picture}}>
-        </div>
-        <div *ngIf="!post.is_published">
-            <div *ngIf="post.attachments && post.attachments.subattachments">
-                <div *ngFor="let media of post.attachments.subattachments.data">
-                    <img src={{media.src}}>          
-                    {{media.src}}  
-                </div>
+        <div class="row">
+            <div class="col-md-3">
+                <img src={{post.picture}}>
             </div>
-            <div *ngIf="post.attachments && !post.attachments.subattachments">
-                <div *ngFor="let media of post.attachments.data">
-                    <img src={{media.src}}>       
-                    {{media.src}}     
-                </div>
+            <div class="col-md-9">
+                <div>{{post.name}}</div>
+                <div>{{post.message}}</div>
+                <div>Posted on: {{post.created_time | date:'medium'}}</div>
+                <!--<div>{{post.link}}</div>-->
+                <div>Seen by: {{post.views}} people</div>
             </div>
         </div>
-        <div *ngIf="post.attachments">
-            <!--{{post.attachments.data[0]}}-->
-            <div *ngIf="post.attachments.data[0].subattachments">
-                <!--{{post.attachments.data[0].subattachments.data[0]}}-->
-                <div class="container">
-                    <div class="row">
-                        <!--<div class="col-md-3">-->
-                            <div class="col-md-3" *ngFor="let s of post.attachments.data[0].subattachments.data">
-                                <img src={{s.media.image.src}} class="img-thumbnail">
-                                <!--Subattachments:{{s.media.image.src}}            -->
-                            </div>
-                        <!--</div>-->
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div>{{post.name}}</div>
-        <div>{{post.message}}</div>
-        <div>{{post.created_time | date:'medium'}}</div>
-        <div>{{post.link}}</div>
     </div>
 </div>
 <br>

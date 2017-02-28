@@ -24,14 +24,13 @@ export class FbPostService implements OnInit {
             });
     }
 
-    ngOnInit() 
-    {
+    ngOnInit() {
         this.serviceCall()
-               .subscribe(data => {
+            .subscribe(data => {
                 this.page_access_token = data['access_token'];
                 console.log(data);
             });
-     }
+    }
 
     serviceCall(): Observable<Object> {
         let url = "https://graph.facebook.com/v2.8/165610100609672?fields=access_token&access_token=" + this.user_access_token;
@@ -42,7 +41,7 @@ export class FbPostService implements OnInit {
 
     getFbPost(): Observable<FbPagePost[]> {
         let fields = "fields=created_time,link,name,picture,description,message,is_published";
-        let url = "https://graph.facebook.com/v2.8/" + this.pageId+ "/feed?fields=created_time,link,name,picture,description,message&access_token=" + this.user_access_token;
+        let url = "https://graph.facebook.com/v2.8/" + this.pageId + "/feed?fields=created_time,link,name,picture,description,message&access_token=" + this.user_access_token;
         let headers = new Headers({ 'Content-Type': 'application/json' });
         let options = new RequestOptions({ headers: headers });
         return this.http.get(url, options)
@@ -55,11 +54,11 @@ export class FbPostService implements OnInit {
         fields += "created_time,place,application,from,is_hidden,permalink_url,privacy,status_type,story_tags,story,updated_time";
         let flag = "&is_published=false";
         let access_token = "&access_token=" + this.user_access_token;
-        let url = "https://graph.facebook.com/v2.8/" + this.pageId+ edge +fields + flag + access_token;
+        let url = "https://graph.facebook.com/v2.8/" + this.pageId + edge + fields + flag + access_token;
         let headers = new Headers({ 'Content-Type': 'application/json' });
         let options = new RequestOptions({ headers: headers });
         return this.http.get(url, options)
-            .map(response=> response.json().data);
+            .map(response => response.json().data);
     }
 
     responseData: any;
@@ -120,22 +119,31 @@ export class FbPostService implements OnInit {
             .catch(this.handleError);
     }
 
-    batch(){
-        var url = "https://graph.facebook.com/v2.8"//&access_token=" + access_token;
-        var batch = '[{ "method":"GET","name":"get-friends","relative_url":"me/friends?limit=5",},{"method":"GET","relative_url":"?ids={result=get-friends:$.data.*.id}"}]';
-        let req1 = this.pageId+ "/feed?fields=created_time,link,name,picture,description,message";
-        var access_token = "EAAUgYnARgHQBAJ99AtjVvYdozZASjzWpUEMjE4angujFBhrZCRNTDuR3VuhikZBIEuQYmvnGzDfBXSDomiEL34SLRi8Rohmerkx03PYNBs0IbdXR5Tqbs48wr3TZAzyZCze0jcnMETfpXZAq848GU8M2w3ASpoAZCJJLZAODkaLSYQZDZD";
-//        var batch = "[{"method":"GET", "name":"first","relative_url":"165610100609672/feed?limit(5)"},{"method":"get", "name":"second", "relative_url":"/insights/post_impressions?ids={result=first:$.data.*.id}"}]";
-        var batch2 = '[{"method":"GET", "name":"first","relative_url": "165610100609672/feed?fields=created_time,link,name,picture,description,message","omit_response_on_success":false},{"method":"get", "name":"second", "relative_url":"/insights/post_impressions?ids={result=first:$.data.*.id}"}]';
-        // var body = JSON.stringify({ access_token: this.page_access_token, batch: batch2 });        
-        var body = ({ access_token: access_token, batch: batch2 });
-    //      var body = JSON.stringify({ batch: batch });
+    batch() {
+        var url = "https://graph.facebook.com/v2.8";
+        let access_token = "EAAUgYnARgHQBAJ99AtjVvYdozZASjzWpUEMjE4angujFBhrZCRNTDuR3VuhikZBIEuQYmvnGzDfBXSDomiEL34SLRi8Rohmerkx03PYNBs0IbdXR5Tqbs48wr3TZAzyZCze0jcnMETfpXZAq848GU8M2w3ASpoAZCJJLZAODkaLSYQZDZD";
+        let url1 = "165610100609672/feed?fields=created_time,link,name,picture,description,message";
+        let url2 = "/insights/post_impressions_unique/lifetime?fields=values&ids={result=first:$.data.*.id}";
+        let req1 = {
+            method: "GET",
+            name:"first",
+            relative_url:url1,
+            omit_response_on_success:false
+        };
+        let req2 = {
+            method:"GET",
+            name:"second",
+            relative_url:url2
+        };
+        let batch = JSON.stringify([req1, req2]);
+        let body = ({access_token:access_token, batch:(batch)});
+        //      var body = JSON.stringify({ batch: batch });
         return this.http.post(url, body)
             .map(response => response.json())
     }
 
 
-    
+
 
     private handleError(error: Response | any) {
         // In a real world app, we might use a remote logging infrastructure

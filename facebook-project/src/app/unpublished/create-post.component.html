@@ -1,10 +1,10 @@
-<!--<div class="container">
+<div class="container">
     <div class="hidden-lg-down"><span class="badge badge-default">xl</span></div>
     <div class="hidden-md-down hidden-xl-up"><span class="badge badge-default">lg</span></div>
     <div class="hidden-sm-down hidden-lg-up"><span class="badge badge-default">md</span></div>
     <div class="hidden-xs-down hidden-md-up"><span class="badge badge-default">sm</span></div>
     <div class="hidden-xs hidden-sm-up"><span class="badge badge-default">xs</span></div>
-</div>-->
+</div>
 
 <div class="card" (placeSearcher)="onSearch($event)">
     <!--<div *ngIf="validation && validation.error">{{validation.error}}</div>
@@ -12,7 +12,7 @@
     <div class="card-block">
         <div class="container">
             <div class="row">
-                <input class="form-control" [formControl]="message" placeholder="Write something..." style="border:none"/>
+                <textarea style="overflow:auto; resize:vertical" class="form-control" [formControl]="message" placeholder="Write something..." style="border:none"></textarea>
                 <!--message: {{message}}
                 message text: {{message.value}}
                 value: {{message.value == null}}
@@ -39,7 +39,7 @@
     <div class="card-footer">
         <div class="container">
             <div class="row">
-                <div class="col-md-6">
+                <div class="col-md-6 col-sm-6">
                     <span class="row">
                         <div>
                             <button class="btn btn-secondary" type="button" id="dropdownMenuButton" data-toggle="dropdown">
@@ -63,8 +63,8 @@
                         </div>
                     </span>
                 </div>
-                <div class="col-md-6">
-                    <span class="row float-md-right">
+                <div class="col-md-6 col-sm-6">
+                    <span class="row float-right">
                         <div class="btn-group">
                             <!--[disabled]="(!message.valid) && post.pictureFile == null" -->
                             <button type="button" 
