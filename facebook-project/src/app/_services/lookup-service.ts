@@ -57,7 +57,7 @@ export class LookupService
     }
     getPlacesWithSearchTerm(place:String) : Observable<Place[]>
     {
-        let url = "https://graph.facebook.com/search?q="+place+"&type=place&access_token=1442982042632308|f4e0a9599a82f2265a1a886a9902858c";
+        let url = "https://graph.facebook.com/search?q="+place+"&type=place&limit=15&access_token=1442982042632308|f4e0a9599a82f2265a1a886a9902858c";
         return this.http.get(url).map(response=>response.json().data);
     }
 }

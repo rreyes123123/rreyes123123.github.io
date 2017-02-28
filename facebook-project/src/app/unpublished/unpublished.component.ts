@@ -14,6 +14,7 @@ import { SearchComponent } from '../search/search.component';
 import { PostComponent } from './post.component';
 import { CreatePostComponent } from './create-post.component';
 import { UnpublishedPostComponent } from './unpublished-post.component';
+declare var $:any;
 
 @Component({
   selector: "unpublished-app",
@@ -33,7 +34,7 @@ export class UnpublishedComponent {
 
   unPublishedActive = "nav-link";
   publishedActive = "nav-link active";
-
+  errorMessage;
   clickPublish() {
     this.unPublishedActive = "nav-link";
     this.publishedActive = "nav-link active";
@@ -68,23 +69,9 @@ export class UnpublishedComponent {
       this.placeObserver.next(null);
   }
   onSearch(event) {
-    //    this.http.get('https://api.spotify.com/v1/search?q=' + event + '&type=artist')
     let fields = "?fields=posts.since(2014-01-01).until(2015-06-30).limit(100)%7Bcreated_time%2Clink%2Cname%2Cdescription%2Cmessage%7D";
     let access_token = "&access_token=1442982042632308|f4e0a9599a82f2265a1a886a9902858c";
-
-    //let url = "https://graph.facebook.com/v2.8/" + event + fields + access_token;
     let url = "https://graph.facebook.com/v2.8/" + event + "?fields=posts" + access_token;
-    /*  this.http.get(url)
-            .map((response) => {
-              var artists = response.json();
-              console.log(artists.posts.data);
-              return artists.posts.data;
-      //        return artists.artists.items;
-          }).subscribe(result => {
-            console.log(result);
-            var n = this.dataObserver.next(result);
-          }, error => console.log('Could not load artists'));
-          */
   }
 
   getPublishedPosts() {
@@ -109,10 +96,14 @@ export class UnpublishedComponent {
         data => {
           console.log((data));
           this.response = data;
+          this.errorMessage = data;
+          $("#errorModal").modal('show');
           // this.method();
         },
         error => {
           console.log(error);
+          this.errorMessage = error;
+          $("#errorModal").modal('show');
           this.response = error;
         });
     }
@@ -120,23 +111,26 @@ export class UnpublishedComponent {
       this._fbPostService
         .uploadFbPostWithPhoto(post)
         .then(data => {
-        this.response = data; console.log("in then"); console.log(data); //this.method();
+          this.response = data; 
+          console.log("in then"); 
+          console.log(data);
+          this.errorMessage = data;
+          $("#errorModal").modal('show');
+
         })
     }
   }
-  tryBatch()
-  {
-    var access_token = 'EAAUgYnARgHQBAGLmSVxeqhUCDZAFQvOOuKgPy7ZCMHNLIbaSQXiOb6EfhwZBDknOoxX4tMIdDymUmXIBvXVqDzlRddIP3ywtfOSIbNGqZBDn8HwJr3MlAYw8f3xM8MMbO9hIXT6oCpF1LN6hcFFxHJTuwIFZCgw2VPThJhVthX5yDLMTEU3Dd0GAfcGZAH3X0ZD';
-    var url="https://graph.facebook.com/v2.8/access_token="+access_token;
-    var batch = '[{ "method":"GET","name":"get-friends","relative_url":"me/friends?limit=5",},{"method":"GET","relative_url":"?ids={result=get-friends:$.data.*.id}"}]';
-
-    var batch2 = '[{"method":"GET", "name":"first","relative_url":"165610100609672/feed?limit(5)"},{"method":"get", "name":"second", "relative_url":"/insights/post_impressions?ids={result=first:$.data.*.id}"}]';
-      var body = JSON.stringify({access_token:access_token, batch:batch});
-      var body = JSON.stringify({batch:batch});
-    this.http.post(url,body)
-    .map(response=>response.json())
-    .subscribe(data=> console.log(data));
-
+  tryBatch() {
+    if (localStorage.getItem('response') != null) {
+      this._fbPostService.batch()
+        .subscribe(data => 
+        {
+          console.log("data[0]");
+          console.log(data)
+          // console.log("data[1]");
+          // console.log(data[1].body)
+        });
+    }
 
 
 

@@ -120,6 +120,20 @@ export class FbPostService implements OnInit {
             .catch(this.handleError);
     }
 
+    batch(){
+        var url = "https://graph.facebook.com/v2.8"//&access_token=" + access_token;
+        var batch = '[{ "method":"GET","name":"get-friends","relative_url":"me/friends?limit=5",},{"method":"GET","relative_url":"?ids={result=get-friends:$.data.*.id}"}]';
+        let req1 = this.pageId+ "/feed?fields=created_time,link,name,picture,description,message";
+        var access_token = "EAAUgYnARgHQBAJ99AtjVvYdozZASjzWpUEMjE4angujFBhrZCRNTDuR3VuhikZBIEuQYmvnGzDfBXSDomiEL34SLRi8Rohmerkx03PYNBs0IbdXR5Tqbs48wr3TZAzyZCze0jcnMETfpXZAq848GU8M2w3ASpoAZCJJLZAODkaLSYQZDZD";
+//        var batch = "[{"method":"GET", "name":"first","relative_url":"165610100609672/feed?limit(5)"},{"method":"get", "name":"second", "relative_url":"/insights/post_impressions?ids={result=first:$.data.*.id}"}]";
+        var batch2 = '[{"method":"GET", "name":"first","relative_url": "165610100609672/feed?fields=created_time,link,name,picture,description,message","omit_response_on_success":false},{"method":"get", "name":"second", "relative_url":"/insights/post_impressions?ids={result=first:$.data.*.id}"}]';
+        // var body = JSON.stringify({ access_token: this.page_access_token, batch: batch2 });        
+        var body = ({ access_token: access_token, batch: batch2 });
+    //      var body = JSON.stringify({ batch: batch });
+        return this.http.post(url, body)
+            .map(response => response.json())
+    }
+
 
     
 

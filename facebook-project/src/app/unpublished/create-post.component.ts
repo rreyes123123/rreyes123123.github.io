@@ -1,5 +1,5 @@
-import { Component, Input, Output, EventEmitter, OnInit, OnChanges, SimpleChange } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { Component, Input, Output, EventEmitter, OnInit, OnChanges, SimpleChange , ViewChild} from '@angular/core';
+import { FormControl, Validators } from '@angular/forms';
 import { FbPagePost } from '../_models/post';
 import { Place } from '../_models/place';
 import { LookupService } from '../_services/lookup-service';
@@ -12,6 +12,7 @@ declare var $: any;
 })
 export class CreatePostComponent implements OnInit, OnChanges {
     file: File;
+    errorMessage;
     ngOnInit() {
     }
     ngOnChanges(changes: { [propKey: string]: SimpleChange }) {
@@ -38,10 +39,13 @@ export class CreatePostComponent implements OnInit, OnChanges {
     // @Output() onPublish: EventEmitter<String> = new EventEmitter<String>();
     will_publish: boolean = true;
     post: FbPagePost = new FbPagePost(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
-    message: FormControl = new FormControl();
+    message: FormControl = new FormControl('', Validators.required);
     placeQuery = new FormControl();
     date: Date;
     time: string;
+    validPost = false;
+    @ViewChild('selectedImage') selectedImageFile;
+
     publish() {
         console.log("time in publish");
         console.log(this.time);
@@ -59,24 +63,18 @@ export class CreatePostComponent implements OnInit, OnChanges {
     fileChangeEventImage(fileInput: any) {
         this.file = fileInput.target.files[0];
         this.post.pictureFile = this.file;
+        if (this.file) {
+            var reader = new FileReader();
 
-        var reader = new FileReader();
+            reader.onload = (function (theFile) {
+                return function (e) {
+                    document.getElementById('list').innerHTML = ['<img src="', e.target.result, '" title="', theFile.name, '" width="50" />'].join('');
+                };
+            })(this.file);
 
-        reader.onload = (function (theFile) {
-            return function (e) {
-                document.getElementById('list').innerHTML = ['<img src="', e.target.result, '" title="', theFile.name, '" width="50" />'].join('');
-            };
-        })(this.file);
+            reader.readAsDataURL(this.file);
 
-        reader.readAsDataURL(this.file);
-
-    }
-    upload() {
-
-    }
-    placesDropdown() {
-        //        this._lookupService.getPlaces()
-        //        .subscribe(data=> {this.places = data; console.log(data)});
+        }
     }
     selectPlace(place: Place) {
         console.log("selected");
@@ -89,14 +87,16 @@ export class CreatePostComponent implements OnInit, OnChanges {
         this.post.place = null;
     }
     removeSchedule() {
+        this.scheduled = false;
         this.date = null;
         this.time = null;
         this.post.created_time = null;
     }
     removePhoto() {
-        this.placeQuery.setValue("");
-        this.results.ignoreElements();
-        this.post.place = null;
+        this.selectedImageFile.nativeElement.value = '';
+        this.post.pictureFile = null;
+        this.file = null;
+        document.getElementById('list').innerHTML = "";
     }
     schedule() {
         this.date = new Date();
