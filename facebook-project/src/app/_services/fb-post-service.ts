@@ -10,43 +10,74 @@ import { PromotableFbPagePost } from '../_models/promotable-post';
 @Injectable()
 export class FbPostService implements OnInit {
     private user_access_token;
-    private page_access_token;
-    private access_token = "EAACEdEose0cBAI0ZCMWE56Mto3DQ7GmUhGKZAqhXAQIUfZBHObnwL95ti2mjZCF7YIObrxUa1xnG64ZBDgd4ZAvY4DLfwdhNivM9CTJwuZAEQ1aQ3EP7nHmbQZA4JmJLZAJfZCC3UEwg6jU50HQHrz8J9WoiIGUCTFCD92FZA4A3ZBZC9dZBffAbARkCZCoHXJJ74bS0XQZD";
+    private page_access_token = localStorage['page_access_token'];
     private pageId = 165610100609672;
     private pageId2 = 165610100609672;
 
     constructor(private http: Http) {
-        this.user_access_token = JSON.parse(localStorage.getItem('response')).authResponse.accessToken;
-        this.serviceCall()
-            .subscribe(data => {
-                this.page_access_token = data['access_token'];
-                console.log(data);
-            });
+        console.log("fb post service constructot");
+        // this.user_access_token = JSON.parse(localStorage.getItem('response')).authResponse.accessToken;
+        this.user_access_token = localStorage.getItem('user_access_token');
     }
 
     ngOnInit() {
-        this.serviceCall()
-            .subscribe(data => {
-                this.page_access_token = data['access_token'];
-                console.log(data);
-            });
     }
 
-    serviceCall(): Observable<Object> {
-        let url = "https://graph.facebook.com/v2.8/165610100609672?fields=access_token&access_token=" + this.user_access_token;
-        return this.http.get(url)
-            .map(response => response.json());
-    }
-
-
-    getFbPost(): Observable<FbPagePost[]> {
-        let fields = "fields=created_time,link,name,picture,description,message,is_published";
+    getFbPost() {
+    // getFbPost(): Observable<Object[]> {
+/*        let fields = "fields=created_time,link,name,picture,description,message,is_published";
         let url = "https://graph.facebook.com/v2.8/" + this.pageId + "/feed?fields=created_time,link,name,picture,description,message&access_token=" + this.user_access_token;
         let headers = new Headers({ 'Content-Type': 'application/json' });
         let options = new RequestOptions({ headers: headers });
         return this.http.get(url, options)
             .map(response => response.json().data);
-    }
+  */
+        var url = "https://graph.facebook.com/v2.8";
+        let url1 = "165610100609672/feed?fields=created_time,link,name,picture,description,message&limit=5";
+        let url2 = "/insights/post_impressions_unique/lifetime?fields=values&ids={result=first:$.data.*.id}";
+        let req1 = {
+            method: "GET",
+            name:"first",
+            relative_url:url1,
+            omit_response_on_success:false
+        };
+        let req2 = {
+            method:"GET",
+            name:"second",
+            relative_url:url2
+        };
+        let batch = JSON.stringify([req1, req2]);
+        console.log("FB POST");
+        console.log(this.page_access_token);
+        let body = ({access_token: localStorage['page_access_token'], 
+            batch:(batch)});
+        return this.http.post(url, body)
+            .map(response => response.json())
+  }
+  getNext(url1:string)
+  {
+        let url = "https://graph.facebook.com/v2.8/";
+        url1 = url1.replace(url,"");
+        console.log("in getnext in service");
+        console.log(url1);
+        let url2 = "/insights/post_impressions_unique/lifetime?fields=values&ids={result=first:$.data.*.id}";
+        let req1 = {
+            method: "GET",
+            name:"first",
+            relative_url:url1,
+            omit_response_on_success:false
+        };
+        let req2 = {
+            method:"GET",
+            name:"second",
+            relative_url:url2
+        };
+        let batch = JSON.stringify([req1, req2]);
+        let body = ({access_token: localStorage['page_access_token'], batch:(batch)});
+        //      var body = JSON.stringify({ batch: batch });
+        return this.http.post(url, body)
+            .map(response => response.json())      
+  }
 
     getUnpublishedFbPosts(): Observable<PromotableFbPagePost[]> {
         let edge = "/promotable_posts?";
@@ -54,6 +85,8 @@ export class FbPostService implements OnInit {
         fields += "created_time,place,application,from,is_hidden,permalink_url,privacy,status_type,story_tags,story,updated_time";
         let flag = "&is_published=false";
         let access_token = "&access_token=" + this.user_access_token;
+        console.log("unpub");
+        console.log(this.user_access_token);
         let url = "https://graph.facebook.com/v2.8/" + this.pageId + edge + fields + flag + access_token;
         let headers = new Headers({ 'Content-Type': 'application/json' });
         let options = new RequestOptions({ headers: headers });

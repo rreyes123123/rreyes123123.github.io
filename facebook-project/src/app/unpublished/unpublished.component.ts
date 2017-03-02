@@ -14,8 +14,8 @@ import { SearchComponent } from '../search/search.component';
 import { PostComponent } from './post.component';
 import { CreatePostComponent } from './create-post.component';
 import { UnpublishedPostComponent } from './unpublished-post.component';
-declare var $:any;
-
+declare var $: any;
+declare var map: any;
 @Component({
   selector: "unpublished-app",
   templateUrl: './unpublished.component.html'
@@ -32,9 +32,11 @@ export class UnpublishedComponent {
   private placeObserver: Observer<Place[]>;
   private response: any;
 
+  insights;
   unPublishedActive = "nav-link";
   publishedActive = "nav-link active";
-  errorMessage;
+  errorMessage: any = "";
+  paging;
   clickPublish() {
     this.unPublishedActive = "nav-link";
     this.publishedActive = "nav-link active";
@@ -75,11 +77,18 @@ export class UnpublishedComponent {
   }
 
   getPublishedPosts() {
-    this._fbPostService.getFbPost().subscribe(data => { this.publishedPosts = data; console.log(this.publishedPosts) });
+    this.tryBatch();
+    // this._fbPostService.getFbPost()
+    //   .subscribe(data => {
+    //     this.publishedPosts = data;
+    //     console.log(this.publishedPosts)
+    //   });
   }
 
   getUnpublishedPosts() {
-    this._fbPostService.getUnpublishedFbPosts().subscribe(data => { this.unpublishedPosts = data; console.log(data) });
+
+    this._fbPostService.getUnpublishedFbPosts()
+      .subscribe(data => { this.unpublishedPosts = data; console.log(data) });
   }
   getStyle(post: FbPagePost) {
     if (post.name == "Timeline Photos")
@@ -88,83 +97,114 @@ export class UnpublishedComponent {
       return { 'opacity': 1.0, 'filter': 'alpha(opacity=100)' };
   }
   onPublish(post: FbPagePost) {
-    console.log("in onPublished");
     let s;
     if (!post.pictureFile) {
       this._fbPostService.createFbPostWithPost(post)
         .subscribe(
         data => {
-          console.log((data));
+          // console.log((data));
           this.response = data;
           this.errorMessage = data;
           $("#errorModal").modal('show');
           // this.method();
         },
         error => {
-          console.log(error);
+          // console.log(error);
           this.errorMessage = error;
           $("#errorModal").modal('show');
           this.response = error;
         });
     }
     else {
+      let that = this;
+      $("#loadingModal").modal('show');
       this._fbPostService
         .uploadFbPostWithPhoto(post)
         .then(data => {
-          this.response = data; 
-          console.log("in then"); 
-          console.log(data);
-          this.errorMessage = data;
-          $("#errorModal").modal('show');
-
+          $("#loadingModal").modal('hide');
+          that.response = data;
+          that.errorMessage = data;
         })
+        .catch(function (e) {
+          $("#loadingModal").modal('hide');
+          $("#errorModal").modal('show');
+          console.log(e);
+          that.errorMessage = JSON.parse(e).error.message;
+        })
+      { }
     }
   }
 
-  extractFbPages()
-  {
-    for(let i in this.publishedPosts)
-    {
-      let id = this.publishedPosts[i].id;      
+  extractFbPages() {
+    for (let i in this.publishedPosts) {
+      let id = this.publishedPosts[i].id;
       this.publishedPosts[i].views = this.insights.get(id);
       console.log(id);
       console.log(this.insights.get(id));
     }
-    console.log(this.publishedPosts);
+    // console.log(this.publishedPosts);
   }
-  insights 
-  extractData(data: Array<Object>) 
-  {
+  extractData(data: Array<Object>) {
     this.insights = new Map();
     console.log("insight data")
-    for (let i in data)
-    {
-      let views = data[i]['data'][0]['values'][0]['value'];
-      // this.insights.push({id:i,views:views});
-      this.insights.set(i,views)
-      console.log(i);      
-      console.log(views);      
+    console.log(data);
+    if (data.length != 0) {
+      for (let i in data) {
+        let views = data[i]['data'][0]['values'][0]['value'];
+        // this.insights.push({id:i,views:views});
+        this.insights.set(i, views)
+         console.log(i);
+         console.log(views);
+      }
     }
-    console.log("insights");
-    console.log(this.insights);
-    console.log(this.publishedPosts);
+    // console.log("insights");
+    // console.log(this.insights);
+    // console.log(this.publishedPosts);
     this.extractFbPages();
   }
 
-
   tryBatch() {
     if (localStorage.getItem('response') != null) {
-      this._fbPostService.batch()
-        .subscribe(result => 
-        {
+      this._fbPostService.getFbPost()
+        .subscribe(result => {
           console.log("data[0]");
           console.log(JSON.parse(result[0].body).data);
           this.publishedPosts = JSON.parse(result[0].body).data;
-          console.log("data[1]");
-          //console.log(JSON.parse(data[1].body));
+          this.paging = JSON.parse(result[0].body).paging;
           this.extractData(JSON.parse(result[1].body));
+          console.log(this.paging);
+          console.log(this.paging.next);
+          console.log(this.paging.previous);
+          // console.log("data[1]");
+          //console.log(JSON.parse(data[1].body));
         });
     }
+  }
+
+  getNext() {
+    this._fbPostService.getNext(this.paging.next)
+      .subscribe(result => {
+        console.log(result);
+        var posts: Object[] = JSON.parse(result[0].body).data;
+        if (posts.length > 0)
+        {
+          this.publishedPosts = JSON.parse(result[0].body).data;
+          this.paging = JSON.parse(result[0].body).paging;
+          this.extractData(JSON.parse(result[1].body));
+        }
+      });
+  }
+  getPrev() {
+    this._fbPostService.getNext(this.paging.previous)
+      .subscribe(result => {
+        var posts: Object[] = JSON.parse(result[0].body).data;
+        if (posts.length != 0)
+        {
+          this.publishedPosts = JSON.parse(result[0].body).data;
+          this.paging = JSON.parse(result[0].body).paging;
+          this.extractData(JSON.parse(result[1].body));
+        }
+      });
   }
 
 

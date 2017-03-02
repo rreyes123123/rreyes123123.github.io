@@ -1,49 +1,64 @@
-<button type="button" (click)="tryBatch()">Hi</button>
-
 <create-post *ngIf="createPost" [validation]="response" [results]="places" (placeSearcher)="onPlaceSearch($event)" (onPublish)="onPublish($event)"></create-post>
-<!--<button (click)="postToFeed()">Post Hola</button>-->
-
-<!--<spotify-search 
-      (searchEvent)="onSearch($event)" 
-      [results]="data">
-</spotify-search>-->
 <hr>
 <ul class="nav nav-tabs">
-  <!--<li class="nav-item"> <a data-toggle="tab" [ngClass]="publishedActive" (click)="clickPublish()" data-target="#home">Published</a></li>
-  <li class="nav-item"> <a data-toggle="tab" [ngClass]="unPublishedActive" (click)="clickUnpublish()" data-target="#profile">Unpublished</a></li>-->
   <li class="nav-item"> <a data-toggle="tab" class="nav-link active" data-target="#home">Published</a></li>
   <li class="nav-item"> <a data-toggle="tab" class="nav-link" data-target="#profile">Unpublished</a></li>
 </ul>
-
 <div class="tab-content">
-  <div class="tab-pane active" id="home" role="tabpanel">
-  <!--<div class="tab-pane" id="home" role="tabpanel">-->
+  <div class="tab-pane active" id="home" role="tabpanel" *ngIf="publishedPosts">
+    <!--<div class="tab-pane" id="home" role="tabpanel">-->
     <div *ngFor="let post of publishedPosts">
       <post-child [post]="post" [page]="hello"></post-child>
     </div>
+    <div class="row" *ngIf="paging">
+      <div class="offset-md-5">
+        <button class="btn btn-secondary" (click)="getPrev()">Prev</button>
+        <button class="btn btn-secondary" (click)="getNext()">Next</button>
+      </div>
+    </div>
+
   </div>
-  <div class="tab-pane" id="profile" role="tabpanel">
+  <div class="tab-pane" id="profile" role="tabpanel" *ngIf="unpublishedPosts">
     <div *ngFor="let unpub of unpublishedPosts">
       <unpublished-post-child [post]="unpub" [page]="hello"></unpublished-post-child>
+    </div>
+
+  </div>
+  <div>
+  </div>
+</div>
+
+
+
+<div class="modal fade" id="errorModal">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Error</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        {{errorMessage}}
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
     </div>
   </div>
 </div>
 
-<div class="modal fade" id="errorModal">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Error</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-            </div>
-            <div class="modal-body">
-                {{errorMessage}}
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            </div>
-        </div>
+<div class="row">
+  <div class="col-md-2 offset-md-5">
+    <div class="modal fade " id="loadingModal">
+      <img class="modal-dialog" style="position:absolute; top:50%; left:50%" src="app/unpublished/ajax-loader.gif" />
     </div>
+  </div>
 </div>
+
+  <!--<fb:login-button scope="public_profile,email,manage_pages,read_insights,publish_pages" onlogin="checkLoginState();">
+  </fb:login-button>
+
+  <div id="status">
+  </div>-->
