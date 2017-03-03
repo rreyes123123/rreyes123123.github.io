@@ -14,6 +14,7 @@ import { SearchComponent } from '../search/search.component';
 import { PostComponent } from './post.component';
 import { CreatePostComponent } from './create-post.component';
 import { UnpublishedPostComponent } from './unpublished-post.component';
+import { LoginComponent } from '../unauthenticated/login.component';
 declare var $: any;
 declare var map: any;
 @Component({
@@ -50,11 +51,8 @@ export class UnpublishedComponent {
 
   constructor(private _fbPostService: FbPostService, private http: Http, private _lookupService: LookupService) {
     this.places = new Observable<Place[]>(observer => this.placeObserver = observer);
-    if (localStorage.getItem('response') != null) {
-      this.getPublishedPosts();
-      this.getUnpublishedPosts()
-    }
-
+    this.getPublishedPosts();
+    this.getUnpublishedPosts()
   }
 
   onPlaceSearch(event) {

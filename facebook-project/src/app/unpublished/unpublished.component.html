@@ -1,3 +1,4 @@
+<login-app></login-app>
 <create-post *ngIf="createPost" [validation]="response" [results]="places" (placeSearcher)="onPlaceSearch($event)" (onPublish)="onPublish($event)"></create-post>
 <hr>
 <ul class="nav nav-tabs">
@@ -5,8 +6,8 @@
   <li class="nav-item"> <a data-toggle="tab" class="nav-link" data-target="#profile">Unpublished</a></li>
 </ul>
 <div class="tab-content">
-  <div class="tab-pane active" id="home" role="tabpanel" *ngIf="publishedPosts">
-    <!--<div class="tab-pane" id="home" role="tabpanel">-->
+  <div class="tab-pane active" id="home" role="tabpanel">
+     <!--*ngIf="publishedPosts">-->
     <div *ngFor="let post of publishedPosts">
       <post-child [post]="post" [page]="hello"></post-child>
     </div>

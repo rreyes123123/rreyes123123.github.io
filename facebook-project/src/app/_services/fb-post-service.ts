@@ -9,29 +9,18 @@ import { PromotableFbPagePost } from '../_models/promotable-post';
 
 @Injectable()
 export class FbPostService implements OnInit {
-    private user_access_token;
+    private user_access_token = localStorage['user_access_token'];
     private page_access_token = localStorage['page_access_token'];
     private pageId = 165610100609672;
     private pageId2 = 165610100609672;
 
     constructor(private http: Http) {
-        console.log("fb post service constructot");
-        // this.user_access_token = JSON.parse(localStorage.getItem('response')).authResponse.accessToken;
-        this.user_access_token = localStorage.getItem('user_access_token');
     }
 
     ngOnInit() {
     }
 
     getFbPost() {
-    // getFbPost(): Observable<Object[]> {
-/*        let fields = "fields=created_time,link,name,picture,description,message,is_published";
-        let url = "https://graph.facebook.com/v2.8/" + this.pageId + "/feed?fields=created_time,link,name,picture,description,message&access_token=" + this.user_access_token;
-        let headers = new Headers({ 'Content-Type': 'application/json' });
-        let options = new RequestOptions({ headers: headers });
-        return this.http.get(url, options)
-            .map(response => response.json().data);
-  */
         var url = "https://graph.facebook.com/v2.8";
         let url1 = "165610100609672/feed?fields=created_time,link,name,picture,description,message&limit=5";
         let url2 = "/insights/post_impressions_unique/lifetime?fields=values&ids={result=first:$.data.*.id}";
@@ -48,7 +37,8 @@ export class FbPostService implements OnInit {
         };
         let batch = JSON.stringify([req1, req2]);
         console.log("FB POST");
-        console.log(this.page_access_token);
+        console.log(localStorage['page_access_token']);
+
         let body = ({access_token: localStorage['page_access_token'], 
             batch:(batch)});
         return this.http.post(url, body)
@@ -84,9 +74,9 @@ export class FbPostService implements OnInit {
         let fields = "fields=message,scheduled_publish_time,attachments{media{image{src}},subattachments{media{image{src}}}},";
         fields += "created_time,place,application,from,is_hidden,permalink_url,privacy,status_type,story_tags,story,updated_time";
         let flag = "&is_published=false";
-        let access_token = "&access_token=" + this.user_access_token;
+        let access_token = "&access_token=" + localStorage['user_access_token'];
         console.log("unpub");
-        console.log(this.user_access_token);
+        console.log(localStorage['user_access_token']);
         let url = "https://graph.facebook.com/v2.8/" + this.pageId + edge + fields + flag + access_token;
         let headers = new Headers({ 'Content-Type': 'application/json' });
         let options = new RequestOptions({ headers: headers });

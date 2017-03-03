@@ -1,5 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { HashLocationStrategy, LocationStrategy } from '@angular/common';
@@ -39,7 +39,6 @@ import { PageGuard } from './_guards/page-guard';
     FbPostService, 
     LookupService, 
     AuthenticationService,
-    { provide: LocationStrategy, useClass: HashLocationStrategy, }, 
     ReactiveFormsModule,
     AuthGuard,
     PageGuard

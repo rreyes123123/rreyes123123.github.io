@@ -1,7 +1,6 @@
-import { Component } from '@angular/core';
-declare var window: any;
-declare var FB: any;
-declare var js: any;
+import { Component, OnInit } from '@angular/core';
+import { Router} from '@angular/router';
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -9,12 +8,4 @@ declare var js: any;
 })
 export class AppComponent {
   title = 'Facebook Post Manager!';
-  constructor() {
-    if(localStorage.getItem('response'))
-    {
-      console.log(localStorage.getItem('response'));
-      console.log(JSON.parse(localStorage.getItem('response')).authResponse);
-      localStorage.setItem('user_access_token',JSON.parse(localStorage.getItem('response')).authResponse.accessToken);
-    }
-  }
 }
