@@ -5,11 +5,10 @@ import { HttpModule } from '@angular/http';
 import { HashLocationStrategy, LocationStrategy } from '@angular/common';
 import { routing } from './app.routing';
 import { AppComponent } from './app.component';
-import { SearchComponent } from './search/search.component';
-import { UnpublishedComponent } from './unpublished/unpublished.component';
-import { PostComponent } from './unpublished/post.component';
-import { UnpublishedPostComponent } from './unpublished/unpublished-post.component';
-import { CreatePostComponent } from './unpublished/create-post.component';
+import { HomeComponent } from './home/home.component';
+import { PostComponent } from './home/post.component';
+import { UnpublishedPostComponent } from './home/unpublished-post.component';
+import { CreatePostComponent } from './home/create-post.component';
 import { LoginComponent } from './unauthenticated/login.component';
 
 import { FbPostService } from './_services/fb-post-service';
@@ -21,8 +20,7 @@ import { PageGuard } from './_guards/page-guard';
 @NgModule({
   declarations: [
     AppComponent,
-    SearchComponent,
-    UnpublishedComponent,
+    HomeComponent,
     PostComponent,
     CreatePostComponent,
     UnpublishedPostComponent,

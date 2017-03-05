@@ -1,26 +1,34 @@
-import { Component, Input, Output, EventEmitter, OnInit, OnChanges, SimpleChange , ViewChild} from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, SimpleChange , ViewChild} from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { FbPagePost } from '../_models/post';
 import { Place } from '../_models/place';
 import { LookupService } from '../_services/lookup-service';
 import { Observable, Observer } from 'rxjs';
+//declare var moment:any;
+import * as moment from 'moment';
 declare var $: any;
 @Component({
     selector: 'create-post',
     templateUrl: './create-post.component.html',
     styleUrls: ['./create-post.component.css']
 })
-export class CreatePostComponent implements OnInit, OnChanges {
+export class CreatePostComponent implements OnInit {
+    @Output() onPublish: EventEmitter<FbPagePost> = new EventEmitter<FbPagePost>();
+    @Input() results: Observable<Place[]>;
+    @Output() placeSearcher = new EventEmitter<String>();
+    @ViewChild('selectedImage') selectedImageFile;
+
     file: File;
-    errorMessage;
+    errorMessage:any;
+    scheduled = false;
+    will_publish: boolean = true;
+    post: FbPagePost = new FbPagePost();
+    message: FormControl = new FormControl('', Validators.required);
+    placeQuery = new FormControl();
+    date; 
+    time: string;
+    validPost = false;
     ngOnInit() {
-    }
-    ngOnChanges(changes: { [propKey: string]: SimpleChange }) {
-        for (let propName in changes) {
-            let changedProp = changes[propName];
-            let to = JSON.stringify(changedProp.currentValue);
-            this.validation = to;
-        }
     }
     constructor(private _lookupService: LookupService) {
         this.placeQuery
@@ -31,21 +39,14 @@ export class CreatePostComponent implements OnInit, OnChanges {
                 console.log(event)
             }
             );
+    this.date = new FormControl('', validDate);
+    function validDate(c) {
+        console.log("in validDate");
+        console.log(c);
+        console.log( moment(c).isValid());
+        return moment(c).isValid() ? {'mismatch':true} : null
+        }
     }
-    @Output() onPublish: EventEmitter<FbPagePost> = new EventEmitter<FbPagePost>();
-    @Input() validation: any;
-    @Input() results: Observable<Place[]>;
-    @Output() placeSearcher = new EventEmitter<String>();
-    // @Output() onPublish: EventEmitter<String> = new EventEmitter<String>();
-    will_publish: boolean = true;
-    post: FbPagePost = new FbPagePost(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,null);
-    message: FormControl = new FormControl('', Validators.required);
-    placeQuery = new FormControl();
-    date: Date;
-    time: string;
-    validPost = false;
-    @ViewChild('selectedImage') selectedImageFile;
-
     publish() {
         console.log("time in publish");
         console.log(this.time);
@@ -104,9 +105,7 @@ export class CreatePostComponent implements OnInit, OnChanges {
         console.log(this.time);
         $("#exampleModal").modal('show');
         this.will_publish = false;
-        // this.will_publish = false;
     }
-    scheduled = false;
     schedule2() {
         this.scheduled = true;
         $("#exampleModal").modal('hide');

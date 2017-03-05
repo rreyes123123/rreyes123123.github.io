@@ -2,6 +2,7 @@ import {FbApp} from './app';
 import {FbPostType, FbStatusType} from './fb-post-type';
 import {Profile} from './profile';
 import {Place} from './place';
+
 export class Image {
     constructor(
         public src: string
@@ -20,9 +21,6 @@ export class Attachments {
     ){}
 }
 
-// attachments.data.media.image
-// attachments.data.subattachments.data => array of Media objects
-// media.image.src
 export class PromotableFbPagePost {
     constructor(
         public message: string,

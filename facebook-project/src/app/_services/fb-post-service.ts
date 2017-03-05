@@ -16,7 +16,6 @@ export class FbPostService implements OnInit {
 
     constructor(private http: Http) {
         console.log("fb post service constructot");
-        // this.user_access_token = JSON.parse(localStorage.getItem('response')).authResponse.accessToken;
         this.user_access_token = localStorage.getItem('user_access_token');
     }
 
@@ -24,14 +23,6 @@ export class FbPostService implements OnInit {
     }
 
     getFbPost() {
-    // getFbPost(): Observable<Object[]> {
-/*        let fields = "fields=created_time,link,name,picture,description,message,is_published";
-        let url = "https://graph.facebook.com/v2.8/" + this.pageId + "/feed?fields=created_time,link,name,picture,description,message&access_token=" + this.user_access_token;
-        let headers = new Headers({ 'Content-Type': 'application/json' });
-        let options = new RequestOptions({ headers: headers });
-        return this.http.get(url, options)
-            .map(response => response.json().data);
-  */
         var url = "https://graph.facebook.com/v2.8";
         let url1 = "165610100609672/feed?fields=created_time,link,name,picture,description,message&limit=5";
         let url2 = "/insights/post_impressions_unique/lifetime?fields=values&ids={result=first:$.data.*.id}";

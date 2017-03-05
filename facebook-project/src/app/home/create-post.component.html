@@ -7,17 +7,10 @@
 </div>
 
 <div class="card" (placeSearcher)="onSearch($event)">
-    <!--<div *ngIf="validation && validation.error">{{validation.error}}</div>
-    <div *ngIf="validation">{{validation}}</div>-->
     <div class="card-block">
         <div class="container">
             <div class="row">
                 <textarea style="overflow:auto; resize:vertical" class="form-control" [formControl]="message" placeholder="Write something..." style="border:none"></textarea>
-                <!--message: {{message}}
-                message text: {{message.value}}
-                value: {{message.value == null}}
-                message valid: {{message.valid}}
-                post.pictureFile: {{post.pictureFile}}-->
             </div>
             <div class="row">
                 <div *ngIf="post.place != null">
@@ -102,6 +95,8 @@
             <div class="modal-body">
                 <div *ngIf="!will_publish">
                     <label class="col-form-label">When would you like to schdule your post for?</label>
+                    <div *ngIf="humanDate">{{humanDate}}</div>
+                    <div *ngIf="time">{{time}}</div>
                     <input class="form-control" type="date" [(ngModel)]="humanDate" placeholder="" />
                     <input class="form-control" type="time" [(ngModel)]="time" />
                 </div>
@@ -113,4 +108,6 @@
         </div>
     </div>
 </div>
+
+
 

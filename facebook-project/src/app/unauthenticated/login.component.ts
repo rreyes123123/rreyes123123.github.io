@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { AuthenticationService } from '../_services/authentication-service';
 
 @Component({
-  selector: "login-app",
+  selector: "app-login",
   templateUrl: './login.component.html'
 })
 export class LoginComponent {
@@ -17,7 +17,7 @@ export class LoginComponent {
                     console.log("login");                
                     console.log(data);               
                     console.log(data.access_token);      
-                    router.navigate(['unpublished']);
+                    router.navigate(['home']);
                 }
             )
 

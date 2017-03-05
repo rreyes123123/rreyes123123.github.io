@@ -1,4 +1,4 @@
-<create-post *ngIf="createPost" [validation]="response" [results]="places" (placeSearcher)="onPlaceSearch($event)" (onPublish)="onPublish($event)"></create-post>
+<create-post [results]="places" (placeSearcher)="onPlaceSearch($event)" (onPublish)="onPublish($event)"></create-post>
 <hr>
 <ul class="nav nav-tabs">
   <li class="nav-item"> <a data-toggle="tab" class="nav-link active" data-target="#home">Published</a></li>
@@ -8,7 +8,7 @@
   <div class="tab-pane active" id="home" role="tabpanel" *ngIf="publishedPosts">
     <!--<div class="tab-pane" id="home" role="tabpanel">-->
     <div *ngFor="let post of publishedPosts">
-      <post-child [post]="post" [page]="hello"></post-child>
+      <post-child [post]="post"></post-child>
     </div>
     <div class="row" *ngIf="paging">
       <div class="offset-md-5">
@@ -27,7 +27,6 @@
   <div>
   </div>
 </div>
-
 
 
 <div class="modal fade" id="errorModal">

@@ -10,51 +10,29 @@ import { FbPagePost } from '../_models/post';
 import { PromotableFbPagePost } from '../_models/promotable-post';
 import { Place } from '../_models/place';
 
-import { SearchComponent } from '../search/search.component';
-import { PostComponent } from './post.component';
 import { CreatePostComponent } from './create-post.component';
+import { PostComponent } from './post.component';
 import { UnpublishedPostComponent } from './unpublished-post.component';
 declare var $: any;
 declare var map: any;
 @Component({
-  selector: "unpublished-app",
-  templateUrl: './unpublished.component.html'
+  selector: "app-home",
+  templateUrl: './home.component.html'
 })
-export class UnpublishedComponent {
-  //  createPost=false;
-  createPost = true; // false in prod
+export class HomeComponent {
   publishedPosts: FbPagePost[];
+  insights: any;
   unpublishedPosts: PromotableFbPagePost[];
-
-  //  private data: Observable<Object>;
-  //  private dataObserver: Observer<Object>;
+  paging: any;
+  errorMessage: any = "";
   private places: Observable<Place[]>;
   private placeObserver: Observer<Place[]>;
   private response: any;
 
-  insights;
-  unPublishedActive = "nav-link";
-  publishedActive = "nav-link active";
-  errorMessage: any = "";
-  paging;
-  clickPublish() {
-    this.unPublishedActive = "nav-link";
-    this.publishedActive = "nav-link active";
-    console.log("published");
-  }
-  clickUnpublish() {
-    this.unPublishedActive = "nav-link active";
-    this.publishedActive = "nav-link";
-    console.log("unpublished");
-  }
-
-  constructor(private _fbPostService: FbPostService, private http: Http, private _lookupService: LookupService) {
+  constructor(private http: Http, private _fbPostService: FbPostService, private _lookupService: LookupService) {
     this.places = new Observable<Place[]>(observer => this.placeObserver = observer);
-    if (localStorage.getItem('response') != null) {
-      this.getPublishedPosts();
-      this.getUnpublishedPosts()
-    }
-
+    this.getPublishedPosts();
+    this.getUnpublishedPosts()
   }
 
   onPlaceSearch(event) {
@@ -70,32 +48,15 @@ export class UnpublishedComponent {
       :
       this.placeObserver.next(null);
   }
-  onSearch(event) {
-    let fields = "?fields=posts.since(2014-01-01).until(2015-06-30).limit(100)%7Bcreated_time%2Clink%2Cname%2Cdescription%2Cmessage%7D";
-    let access_token = "&access_token=1442982042632308|f4e0a9599a82f2265a1a886a9902858c";
-    let url = "https://graph.facebook.com/v2.8/" + event + "?fields=posts" + access_token;
-  }
-
   getPublishedPosts() {
     this.tryBatch();
-    // this._fbPostService.getFbPost()
-    //   .subscribe(data => {
-    //     this.publishedPosts = data;
-    //     console.log(this.publishedPosts)
-    //   });
   }
 
   getUnpublishedPosts() {
-
     this._fbPostService.getUnpublishedFbPosts()
       .subscribe(data => { this.unpublishedPosts = data; console.log(data) });
   }
-  getStyle(post: FbPagePost) {
-    if (post.name == "Timeline Photos")
-      return { 'opacity': 0.5, 'filter': 'alpha(opacity=50)' };
-    else
-      return { 'opacity': 1.0, 'filter': 'alpha(opacity=100)' };
-  }
+
   onPublish(post: FbPagePost) {
     let s;
     if (!post.pictureFile) {
@@ -142,7 +103,6 @@ export class UnpublishedComponent {
       console.log(id);
       console.log(this.insights.get(id));
     }
-    // console.log(this.publishedPosts);
   }
   extractData(data: Array<Object>) {
     this.insights = new Map();
@@ -151,10 +111,9 @@ export class UnpublishedComponent {
     if (data.length != 0) {
       for (let i in data) {
         let views = data[i]['data'][0]['values'][0]['value'];
-        // this.insights.push({id:i,views:views});
         this.insights.set(i, views)
-         console.log(i);
-         console.log(views);
+        console.log(i);
+        console.log(views);
       }
     }
     // console.log("insights");
@@ -186,8 +145,7 @@ export class UnpublishedComponent {
       .subscribe(result => {
         console.log(result);
         var posts: Object[] = JSON.parse(result[0].body).data;
-        if (posts.length > 0)
-        {
+        if (posts.length > 0) {
           this.publishedPosts = JSON.parse(result[0].body).data;
           this.paging = JSON.parse(result[0].body).paging;
           this.extractData(JSON.parse(result[1].body));
@@ -198,8 +156,7 @@ export class UnpublishedComponent {
     this._fbPostService.getNext(this.paging.previous)
       .subscribe(result => {
         var posts: Object[] = JSON.parse(result[0].body).data;
-        if (posts.length != 0)
-        {
+        if (posts.length != 0) {
           this.publishedPosts = JSON.parse(result[0].body).data;
           this.paging = JSON.parse(result[0].body).paging;
           this.extractData(JSON.parse(result[1].body));
