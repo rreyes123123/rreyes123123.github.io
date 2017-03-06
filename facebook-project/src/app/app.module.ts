@@ -8,14 +8,14 @@ import { AppComponent } from './app.component';
 import { HomeComponent } from './home/home.component';
 import { PostComponent } from './home/post.component';
 import { UnpublishedPostComponent } from './home/unpublished-post.component';
+import { EmptyPostComponent } from './post-children/empty-post.component';
 import { CreatePostComponent } from './home/create-post.component';
-import { LoginComponent } from './unauthenticated/login.component';
-
+import { LoginComponent } from './login/login.component';
+EmptyPostComponent
 import { FbPostService } from './_services/fb-post-service';
 import { LookupService } from './_services/lookup-service';
 import { AuthenticationService } from './_services/authentication-service';
 import { AuthGuard } from './_guards/auth-guard';
-import { PageGuard } from './_guards/page-guard';
 
 @NgModule({
   declarations: [
@@ -23,6 +23,7 @@ import { PageGuard } from './_guards/page-guard';
     HomeComponent,
     PostComponent,
     CreatePostComponent,
+    EmptyPostComponent,
     UnpublishedPostComponent,
     LoginComponent
   ],
@@ -39,8 +40,7 @@ import { PageGuard } from './_guards/page-guard';
     AuthenticationService,
     { provide: LocationStrategy, useClass: HashLocationStrategy, }, 
     ReactiveFormsModule,
-    AuthGuard,
-    PageGuard
+    AuthGuard
   ],
   bootstrap: [AppComponent]
 })

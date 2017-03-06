@@ -7,5 +7,5 @@ import { PromotableFbPagePost } from '../_models/promotable-post';
 export class UnpublishedPostComponent
 {
     @Input() post: PromotableFbPagePost;
-    @Input('page') pageName: string;
+    // @Input('page') pageName: string;
 }

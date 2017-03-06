@@ -9,9 +9,12 @@
     <!--<div class="tab-pane" id="home" role="tabpanel">-->
     <div *ngFor="let post of publishedPosts">
       <post-child [post]="post"></post-child>
+    </div>    
+    <div *ngIf="publishedPosts.length ==0">
+      <empty-post-child></empty-post-child>
     </div>
     <div class="row" *ngIf="paging">
-      <div class="offset-md-5">
+      <div class="col-md-12 text-center">
         <button class="btn btn-secondary" (click)="getPrev()">Prev</button>
         <button class="btn btn-secondary" (click)="getNext()">Next</button>
       </div>
@@ -20,7 +23,16 @@
   </div>
   <div class="tab-pane" id="profile" role="tabpanel" *ngIf="unpublishedPosts">
     <div *ngFor="let unpub of unpublishedPosts">
-      <unpublished-post-child [post]="unpub" [page]="hello"></unpublished-post-child>
+      <unpublished-post-child [post]="unpub"></unpublished-post-child>
+    </div>
+    <div *ngIf="unpublishedPosts.length ==0">
+      <empty-post-child></empty-post-child>
+    </div>
+    <div class="row" *ngIf="pagingUnpublished">
+      <div class="col-md-12 text-center">
+        <button class="btn btn-secondary" (click)="getPrevUnpublished()">Prev</button>
+        <button class="btn btn-secondary" (click)="getNextUnpublished()">Next</button>
+      </div>
     </div>
 
   </div>
@@ -33,13 +45,17 @@
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">Error</h5>
+        <h5 class="modal-title">
+          <span *ngIf="errorMessage">Error</span>
+          <span *ngIf="success">Success</span>
+        </h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <div class="modal-body">
-        {{errorMessage}}
+          <span *ngIf="errorMessage">{{errorMessage}}</span>
+          <span *ngIf="success">Successfully posted to Facebook page.</span>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -51,7 +67,7 @@
 <div class="row">
   <div class="col-md-2 offset-md-5">
     <div class="modal fade " id="loadingModal">
-      <img class="modal-dialog" style="position:absolute; top:50%; left:50%" src="app/unpublished/ajax-loader.gif" />
+      <img class="modal-dialog" style="position:absolute; top:50%; left:50%" src="https://firebasestorage.googleapis.com/v0/b/facebook-rr.appspot.com/o/ajax-loader.gif?alt=media&token=b79dafe8-784c-40a7-a89f-42897f467a00" />
     </div>
   </div>
 </div>

@@ -3,11 +3,6 @@
     background-repeat: no-repeat;
     background-size: auto;
 }
-#dropdownMenuButton:hover{
-    background-image: url(/app/unpublished/checkin.png);
-    background-repeat: no-repeat;
-    background-size: auto;
-}
 
 /*.inputfile {
     width: 0.1px;

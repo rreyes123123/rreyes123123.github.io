@@ -10,21 +10,22 @@
     <div class="card-block">
         <div class="container">
             <div class="row">
-                <textarea style="overflow:auto; resize:vertical" class="form-control" [formControl]="message" placeholder="Write something..." style="border:none"></textarea>
-            </div>
-            <div class="row">
-                <div *ngIf="post.place != null">
-                    Checked in to --{{post.place.name}} <button type="button" class="close" (click)="removePlace()">&times;</button>
-                </div>
-            </div>
-            <div class="row">
-                <div *ngIf="scheduled">
-                    --Schedule for {{humanDate}} <button type="button" class="close" (click)="removeSchedule()">&times;</button>
-                </div>
+                <textarea style="overflow:auto; resize:vertical" class="form-control" [formControl]="message" placeholder="Write something..."
+                    style="border:none"></textarea>
             </div>
             <div class="row">
                 <div *ngIf="post.pictureFile">
                     <output id="list"></output> <button type="button" class="close" (click)="removePhoto()">&times;</button>
+                </div>
+            </div>
+            <div class="row">
+                <div *ngIf="post.place != null">
+                    --Checked in to {{post.place.name}} <button type="button" class="close" (click)="removePlace()">&times;</button>
+                </div>
+            </div>
+            <div class="row">
+                <div *ngIf="scheduled">
+                    --Schedule for {{finalDate | date:'medium'}}<button type="button" class="close" (click)="removeSchedule()">&times;</button>
                 </div>
             </div>
         </div>
@@ -32,7 +33,7 @@
     <div class="card-footer">
         <div class="container">
             <div class="row">
-                <div class="col-md-6 col-sm-6">
+                <div class="col-md-6 col-sm-6 col-xs-6">
                     <span class="row">
                         <div>
                             <button class="btn btn-secondary" type="button" id="dropdownMenuButton" data-toggle="dropdown">
@@ -40,7 +41,7 @@
                         </button>
                             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                                 <a class="dropdown-item">
-                                    <input [formControl]="placeQuery" placeholder="Search for a place..." style="outline:none" />
+                                    <input [formControl]="placeQuery" placeholder="Search for a place..." style="border:none" />
                                 </a>
                                 <div class="dropdown-item" *ngFor="let place of results | async" (click)="selectPlace(place)">
                                     <div>{{place.name}}</div>
@@ -56,7 +57,7 @@
                         </div>
                     </span>
                 </div>
-                <div class="col-md-6 col-sm-6">
+                <span class="col-md-6 col-sm-6 col-xs-6">
                     <span class="row float-right">
                         <div class="btn-group">
                             <!--[disabled]="(!message.valid) && post.pictureFile == null" -->
@@ -75,7 +76,7 @@
                 <!--btn-group-->
                 </span>
                 <!--span-->
-            </div>
+            </span>
             <!--col-md 6-->
         </div>
     </div>
@@ -92,22 +93,22 @@
           <span aria-hidden="true">&times;</span>
         </button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body"  *ngIf="date && time">
                 <div *ngIf="!will_publish">
                     <label class="col-form-label">When would you like to schdule your post for?</label>
-                    <div *ngIf="humanDate">{{humanDate}}</div>
-                    <div *ngIf="time">{{time}}</div>
-                    <input class="form-control" type="date" [(ngModel)]="humanDate" placeholder="" />
-                    <input class="form-control" type="time" [(ngModel)]="time" />
+                    <div *ngIf="!date.valid">
+                        Date not valid
+                    </div>
+                    <input class="form-control" type="date" value={{humanDate}} [formControl]="date" placeholder="" />
+                    <input class="form-control" type="time" value={{humanTime}} [formControl]="time" placeholder="" />
+                    <!--<input class="form-control" type="date" [ngModel]="human" [formControl]="date" placeholder="" />
+                    <input class="form-control" type="time" [ngModel]="humanTime" [formControl]="time" />-->
                 </div>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary" (click)="schedule2()">Save changes</button>
+            <div class="modal-footer"  *ngIf="date && time">
+                <button [disabled]="!date.valid" type="button" class="btn btn-primary" (click)="schedule2()">Schedule</button>
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
 </div>
-
-
-

@@ -3,7 +3,7 @@
         <div *ngIf="post.attachments">
             <div *ngIf="post.attachments.data[0].media">
                 <div class="container">
-                    <div class="row">                        
+                    <div class="row">
                         <div class="col-md-3">
                             <img src={{post.attachments.data[0].media.image.src}} class="img-thumbnail">
                         </div>
@@ -24,13 +24,17 @@
                 </div>
             </div>
         </div>
-        
-        <div>{{post.name}}</div>
-        <div>{{post.message}}</div>
-        <div>{{post.created_time | date:'medium'}}</div>
-        <div>Scheduled for: {{post.scheduled_publish_time * 1000 | date:'MM-dd-yyyy HH:mm:ss Z'}}</div>
-        <div>{{post.link}}</div>
+
+        <div>{{post.story}}</div>
+        <div>Message: {{post.message}}</div>
+        <div *ngIf="post.place">At: {{post.place.name}}
+            <span *ngIf="post.place" style="font-weight: lighter">{{post.place.category}} - {{post.place.location.city}}, {{post.place.location.state}}</span></div>
+        <div>Created on: {{post.created_time | date:'medium'}}</div>
+        <div>
+            <div *ngIf="post.scheduled_publish_time">Scheduled for: {{post.scheduled_publish_time * 1000 | date:'medium'}}</div>
+            <div *ngIf="!post.scheduled_publish_time && post.is_hidden">Post is hidden</div>
+        </div>
+        <!--<div>{{post.link}}</div>-->
     </div>
 </div>
 <br>
-

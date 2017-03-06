@@ -7,5 +7,5 @@ import { FbPagePost } from '../_models/post';
 export class PostComponent
 {
     @Input() post: FbPagePost;
-    @Input('page') pageName: string;
+    // @Input('page') pageName: string;
 }

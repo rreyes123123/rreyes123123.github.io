@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnInit, SimpleChange , ViewChild} from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, SimpleChange, ViewChild} from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { FbPagePost } from '../_models/post';
 import { Place } from '../_models/place';
@@ -6,6 +6,7 @@ import { LookupService } from '../_services/lookup-service';
 import { Observable, Observer } from 'rxjs';
 //declare var moment:any;
 import * as moment from 'moment';
+import 'moment-timezone'
 declare var $: any;
 @Component({
     selector: 'create-post',
@@ -19,15 +20,16 @@ export class CreatePostComponent implements OnInit {
     @ViewChild('selectedImage') selectedImageFile;
 
     file: File;
-    errorMessage:any;
+    errorMessage: any;
     scheduled = false;
     will_publish: boolean = true;
     post: FbPagePost = new FbPagePost();
     message: FormControl = new FormControl('', Validators.required);
     placeQuery = new FormControl();
-    date; 
-    time: string;
+    date;
+    time; //: string;
     validPost = false;
+    finalDate:Date;
     ngOnInit() {
     }
     constructor(private _lookupService: LookupService) {
@@ -39,27 +41,27 @@ export class CreatePostComponent implements OnInit {
                 console.log(event)
             }
             );
-    this.date = new FormControl('', validDate);
-    function validDate(c) {
-        console.log("in validDate");
-        console.log(c);
-        console.log( moment(c).isValid());
-        return moment(c).isValid() ? {'mismatch':true} : null
-        }
     }
     publish() {
         console.log("time in publish");
         console.log(this.time);
-        let finalDate;
-        if (this.date || this.time) {
-            finalDate = new Date(this.date.getUTCFullYear(), this.date.getUTCMonth(), this.date.getDate(), +this.time.split(':')[0], +this.time.split(':')[1]);
-        }
-        console.log(finalDate);
-        this.post.created_time = finalDate
+        this.post.created_time = this.finalDate
         console.log(this.post.created_time);
         this.post.message = this.message.value;
         this.onPublish.emit(this.post);
+        this.clear();
         // this.onPublish.emit(this.message.value);
+    }
+
+    publishNow() {
+        this.removeSchedule();
+        this.publish();
+    }
+    clear() {
+        this.removeMessage();
+        this.removePhoto();
+        this.removePlace();
+        this.removeSchedule();
     }
     fileChangeEventImage(fileInput: any) {
         this.file = fileInput.target.files[0];
@@ -77,6 +79,9 @@ export class CreatePostComponent implements OnInit {
 
         }
     }
+    removeMessage() {
+        this.message.setValue("");
+    }
     selectPlace(place: Place) {
         console.log("selected");
         console.log(place);
@@ -92,33 +97,74 @@ export class CreatePostComponent implements OnInit {
         this.date = null;
         this.time = null;
         this.post.created_time = null;
+        this.finalDate = null;
     }
     removePhoto() {
         this.selectedImageFile.nativeElement.value = '';
         this.post.pictureFile = null;
         this.file = null;
-        document.getElementById('list').innerHTML = "";
+        //        document.getElementById('list').innerHTML = "";
     }
     schedule() {
-        this.date = new Date();
-        this.time = this.date.getHours() + ":" + this.date.getMinutes();
-        console.log(this.time);
+        // this.date = new FormControl(moment.tz("America/New_York"), validDate);
+        // this.time = new FormControl(moment.tz("America/New_York"), validDate);
+        this.date = new FormControl(moment(), validDate);
+        this.time = new FormControl(moment(), validDate);
+        function validDate(c: FormControl) {
+            return moment(c.value).isValid() ? null : { 'mismatch': true }
+        }
+
         $("#exampleModal").modal('show');
         this.will_publish = false;
     }
     schedule2() {
         this.scheduled = true;
+        this.getFinalDate();
         $("#exampleModal").modal('hide');
     }
     createDraft() { }
 
-    set humanDate(s) {
-        let e = s.split('-');
-        let d = new Date(Date.UTC(+e[0], +e[1] - 1, +e[2]));
-        this.date.setFullYear(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());
+    get humanDate() {
+        var date = this.date.value instanceof moment ? this.date.value.format().substring(0,10) : this.date.value;
+        console.log(date);
+        return this.date.value instanceof moment ? this.date.value.format().substring(0,10) : this.date.value;
+    }
+    get humanTime() {
+        var time = this.time.value instanceof moment ? this.time.value.format().substring(11,16) : this.time.value;
+        console.log(time);
+        return this.time.value instanceof moment ? this.time.value.format().substring(11,16) : this.time.value;
+    }
+    getFinalDate() {
+        let finalDate;
+        let d = this.date.value;
+        let t = this.time.value;
+        let year, month, day, hour, minute;
+        if (d instanceof moment) {
+            year = d.get('year');
+            month = d.get('month');
+            day = d.get('date');
+        }
+        else {
+            let e = d.split('-');
+            year = e[0];
+            month = e[1] - 1;
+            day = e[2];
+        }
+        if (t instanceof moment) {
+            hour = t.get('hour');
+            minute = t.get('minute');
+        }
+        else {
+            let e = t.split(':');
+            hour = e[0]; minute = e[1];
+        }
+        finalDate = new Date();
+        finalDate.setFullYear(year);
+        finalDate.setMonth(month);
+        finalDate.setDate(day);
+        finalDate.setHours(hour);
+        finalDate.setMinutes(minute);
+        this.finalDate = finalDate;
     }
 
-    get humanDate() {
-        return this.date.toISOString().substring(0, 10);
-    }
 }

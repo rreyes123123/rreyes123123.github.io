@@ -22,9 +22,11 @@ declare var map: any;
 export class HomeComponent {
   publishedPosts: FbPagePost[];
   insights: any;
-  unpublishedPosts: PromotableFbPagePost[];
   paging: any;
-  errorMessage: any = "";
+  unpublishedPosts: PromotableFbPagePost[];
+  unpublishedPaging: any;
+  errorMessage: any;
+  success:boolean=false;
   private places: Observable<Place[]>;
   private placeObserver: Observer<Place[]>;
   private response: any;
@@ -41,7 +43,6 @@ export class HomeComponent {
         .subscribe(
         result => {
           this.placeObserver.next(result);
-          console.log(result)
         },
         error => console.log("could not load places")
         )
@@ -49,31 +50,42 @@ export class HomeComponent {
       this.placeObserver.next(null);
   }
   getPublishedPosts() {
-    this.tryBatch();
+    this._fbPostService.getFbPost()
+      .subscribe(result => {
+        this.publishedPosts = JSON.parse(result[0].body).data;
+        console.log(this.publishedPosts);
+        this.paging = JSON.parse(result[0].body).paging;
+        this.extractData(JSON.parse(result[1].body));
+      });
   }
 
   getUnpublishedPosts() {
     this._fbPostService.getUnpublishedFbPosts()
-      .subscribe(data => { this.unpublishedPosts = data; console.log(data) });
+      .subscribe(results => {
+        this.unpublishedPosts = results['data'];
+        this.unpublishedPaging = results['paging'];
+     //   console.log(results)
+      });
   }
-
+  clear() {
+    this.success = false;
+    this.errorMessage = null;
+  }
   onPublish(post: FbPagePost) {
     let s;
+    this.clear();
     if (!post.pictureFile) {
       this._fbPostService.createFbPostWithPost(post)
         .subscribe(
         data => {
-          // console.log((data));
-          this.response = data;
-          this.errorMessage = data;
+          this.success = true;
           $("#errorModal").modal('show');
-          // this.method();
+          this.getPublishedPosts();
+          this.getUnpublishedPosts();
         },
         error => {
-          // console.log(error);
           this.errorMessage = error;
           $("#errorModal").modal('show');
-          this.response = error;
         });
     }
     else {
@@ -83,67 +95,44 @@ export class HomeComponent {
         .uploadFbPostWithPhoto(post)
         .then(data => {
           $("#loadingModal").modal('hide');
-          that.response = data;
-          that.errorMessage = data;
+          console.log("error in then, not catch");
+          that.success = true;
+          $("#errorModal").modal('show');
+          this.getPublishedPosts();
+          this.getUnpublishedPosts();
         })
         .catch(function (e) {
-          $("#loadingModal").modal('hide');
-          $("#errorModal").modal('show');
+          console.log("error in catch");
           console.log(e);
           that.errorMessage = JSON.parse(e).error.message;
+          $("#loadingModal").modal('hide');
+          $("#errorModal").modal('show');
         })
       { }
     }
   }
 
-  extractFbPages() {
+  joinPostsWithInsights() {
     for (let i in this.publishedPosts) {
       let id = this.publishedPosts[i].id;
       this.publishedPosts[i].views = this.insights.get(id);
-      console.log(id);
-      console.log(this.insights.get(id));
     }
   }
   extractData(data: Array<Object>) {
     this.insights = new Map();
-    console.log("insight data")
     console.log(data);
     if (data.length != 0) {
       for (let i in data) {
         let views = data[i]['data'][0]['values'][0]['value'];
         this.insights.set(i, views)
-        console.log(i);
-        console.log(views);
       }
     }
-    // console.log("insights");
-    // console.log(this.insights);
-    // console.log(this.publishedPosts);
-    this.extractFbPages();
-  }
-
-  tryBatch() {
-    if (localStorage.getItem('response') != null) {
-      this._fbPostService.getFbPost()
-        .subscribe(result => {
-          console.log("data[0]");
-          console.log(JSON.parse(result[0].body).data);
-          this.publishedPosts = JSON.parse(result[0].body).data;
-          this.paging = JSON.parse(result[0].body).paging;
-          this.extractData(JSON.parse(result[1].body));
-          console.log(this.paging);
-          console.log(this.paging.next);
-          console.log(this.paging.previous);
-          // console.log("data[1]");
-          //console.log(JSON.parse(data[1].body));
-        });
-    }
+    this.joinPostsWithInsights();
   }
 
   getNext() {
     this._fbPostService.getNext(this.paging.next)
       .subscribe(result => {
-        console.log(result);
         var posts: Object[] = JSON.parse(result[0].body).data;
         if (posts.length > 0) {
           this.publishedPosts = JSON.parse(result[0].body).data;
@@ -163,6 +152,29 @@ export class HomeComponent {
         }
       });
   }
+
+  getNextUnpublished() {
+    this._fbPostService.getNextUnpublished(this.unpublishedPaging.next)
+      .subscribe(result => {
+        var posts = result.data;
+        if (posts.length > 0) {
+          this.unpublishedPosts = posts;
+          this.unpublishedPaging = result.paging;
+        }
+      });
+  }
+
+  getPrevUnpublished() {
+    this._fbPostService.getNextUnpublished(this.unpublishedPaging.previous)
+      .subscribe(result => {
+        var posts = result.data;
+        if (posts.length != 0) {
+          this.unpublishedPosts = posts;
+          this.unpublishedPaging = result.paging;
+        }
+      });
+  }
+
 
 
 
