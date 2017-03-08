@@ -19,7 +19,8 @@ export class AuthenticationService implements OnInit {
     getPageAccessToken()
     {
         this.user_access_token = localStorage['user_access_token'];
-        let url = "https://graph.facebook.com/v2.8/165610100609672?fields=access_token&access_token=" + this.user_access_token;
+        let pageId = 990930044341548;//165610100609672;
+        let url = "https://graph.facebook.com/v2.8/" + pageId + "?fields=access_token&access_token=" + this.user_access_token;
         return this.http.get(url)
             .map(response => response.json())
     }

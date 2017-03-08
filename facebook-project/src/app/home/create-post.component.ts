@@ -41,6 +41,7 @@ export class CreatePostComponent implements OnInit {
                 console.log(event)
             }
             );
+            this.post.published = true;
     }
     publish() {
         console.log("time in publish");
@@ -62,6 +63,7 @@ export class CreatePostComponent implements OnInit {
         this.removePhoto();
         this.removePlace();
         this.removeSchedule();
+        this.post.published = true;
     }
     fileChangeEventImage(fileInput: any) {
         this.file = fileInput.target.files[0];
@@ -122,7 +124,12 @@ export class CreatePostComponent implements OnInit {
         this.getFinalDate();
         $("#exampleModal").modal('hide');
     }
-    createDraft() { }
+    published = true;
+    createUnpublshed() {
+        this.published=false;
+        this.post.published =this.published;
+        this.publish();
+     }
 
     get humanDate() {
         var date = this.date.value instanceof moment ? this.date.value.format().substring(0,10) : this.date.value;

@@ -42,5 +42,6 @@ export class FbPagePost {
         public schedule_time:Date;
         public pictureFile:File;
         public views:number;
+        public published:boolean;
     
 }

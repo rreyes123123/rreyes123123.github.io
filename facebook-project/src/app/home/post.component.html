@@ -5,15 +5,14 @@
                 <img src={{post.picture}} class="img-thumbnail">
             </div>
             <div class="col-md-9">
-                <div>{{post.name}}</div>
+                <!--<div>{{post.name}}</div>-->
                 <div>{{post.story}}</div>
 
-                <div>Message: {{post.message}}</div>
+                <div *ngIf="post.message">Message: {{post.message}}</div>
                 <div *ngIf="post.place">At: {{post.place.name}}
                     <span *ngIf="post.place" style="font-weight: lighter">{{post.place.category}} - {{post.place.location.city}}, {{post.place.location.state}}</span></div>
                 <div>Posted on: {{post.created_time | date:'medium'}}</div>
-
-                <div>Seen by: {{post.views}} people</div>
+                <div>Number of views: {{post.views}} </div>
             </div>
         </div>
     </div>

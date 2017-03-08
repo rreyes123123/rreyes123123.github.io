@@ -123,12 +123,14 @@ export class FbPostService {
         let message = post.message ? "message=" + post.message : "";
         let place = post.place ? "&place=" + post.place.id : "";
         let stamp = post.created_time ? post.created_time.getTime() / 1000 - (post.created_time.getTime() / 1000) % 1 : "";
-        let scheduled = post.created_time ? "&scheduled_publish_time=" + stamp + "&published=false" : "";
+        let scheduled = post.created_time ? "&scheduled_publish_time=" : "" + stamp;
+        let published =  !post.published ? "&published=false" : "";
         let url = "https://graph.facebook.com/v2.8/" + this.pageId
             + edge
             + message
             + place
             + scheduled
+            + published
             + "&access_token=" + localStorage['page_access_token'];
         return this.http.post(url, "")
             .map(response => response.json())
